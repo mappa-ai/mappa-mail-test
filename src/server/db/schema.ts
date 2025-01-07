@@ -21,10 +21,29 @@ export const posts = createTable(
       .default(sql`(unixepoch())`)
       .notNull(),
     updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
-      () => new Date()
+      () => new Date(),
     ),
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),
-  })
+  }),
+);
+
+export const mails = createTable(
+  "mails",
+  {
+    id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+    template: text("template", { length: 256 }).notNull(),
+    to: text("to", { length: 256 }).notNull(),
+    status: text("status", { enum: ["sent", "pending", "failed"] }).notNull(),
+    createdAt: int("created_at", { mode: "timestamp" })
+      .default(sql`(unixepoch())`)
+      .notNull(),
+    updatedAt: int("updated_at", { mode: "timestamp" }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (t) => ({
+    templateIndex: index("template_idx").on(t.template),
+  }),
 );
